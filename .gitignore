@@ -1,0 +1,7 @@
+.idea/*
+*.iml
+nginx.crt
+nginx.key
+nginx.csr
+.env
+*.tar
