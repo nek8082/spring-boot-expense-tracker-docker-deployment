@@ -3,4 +3,5 @@
 nginx.crt
 nginx.key
 nginx.csr
-.env-prod
+.env
+*.tar
