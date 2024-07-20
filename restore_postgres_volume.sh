@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-VOLUME_NAME="cashkontrolleur-docker-client_postgres-data"
+VOLUME_NAME="spring-boot-expense-tracker-docker-deployment_postgres-data"
 BACKUP_PATH="$(pwd)/postgres_backup"
 BACKUP_FILE="$1"  # Expects the name of the backup file as the first parameter
 
