@@ -1,0 +1,35 @@
+@startuml
+actor User
+participant "NGINX\n(Reverse Proxy)\ncashkontrolleur.de" as NGINX
+participant "Spring-Service\n(cashkontrolleur-service)\nspring-service:8081" as Service
+participant "Keycloak\nkeycloak:8080" as Keycloak
+database "Postgres\npostgres:5432" as Postgres
+
+User -> NGINX: 1. GET https://cashkontrolleur.de/private
+NGINX -> Service: 2. Forward to http://spring-service:8081/private
+Service -> NGINX: 3. Redirect to https://cashkontrolleur.de/oauth2/authorization/keycloak
+NGINX -> Service: 4. Forward to http://spring-service:8081/oauth2/authorization/keycloak
+Service -> NGINX: 5. Redirect to https://cashkontrolleur.de/auth/realms/cashkontrolleur-realm/protocol/openid-connect/auth?\nresponse_type=code&\nclient_id=cashkontrolleur-client&\nredirect_uri=https://cashkontrolleur.de/login/oauth2/code/keycloak&\nscope=openid profile email&\nstate=random-state-value
+NGINX -> Keycloak: 6. Forward to http://keycloak:8080/auth/realms/cashkontrolleur-realm/protocol/openid-connect/auth?\nresponse_type=code&\nclient_id=cashkontrolleur-client&\nredirect_uri=https://cashkontrolleur.de/login/oauth2/code/keycloak&\nscope=openid profile email&\nstate=random-state-value
+Keycloak -> Postgres: 7. DB Query (if needed)
+Postgres -> Keycloak: 8. DB Response
+Keycloak -> NGINX: 9. Return login page
+NGINX -> User: 10. Display Keycloak login page
+User -> NGINX: 11. POST credentials to https://cashkontrolleur.de/auth/realms/cashkontrolleur-realm/protocol/openid-connect/auth
+NGINX -> Keycloak: 12. Forward credentials to http://keycloak:8080/auth/realms/cashkontrolleur-realm/protocol/openid-connect/auth
+Keycloak -> Postgres: 13. Verify credentials
+Postgres -> Keycloak: 14. Verification result
+Keycloak -> NGINX: 15. Redirect to https://cashkontrolleur.de/login/oauth2/code/keycloak?code=AUTH_CODE&state=random-state-value
+NGINX -> User: 16. Redirect to https://cashkontrolleur.de/login/oauth2/code/keycloak?code=AUTH_CODE&state=random-state-value
+User -> NGINX: 17. GET https://cashkontrolleur.de/login/oauth2/code/keycloak?code=AUTH_CODE&state=random-state-value
+NGINX -> Service: 18. Forward to http://spring-service:8081/login/oauth2/code/keycloak?code=AUTH_CODE&state=random-state-value
+Service -> Keycloak: 19. POST http://keycloak:8080/auth/realms/cashkontrolleur-realm/protocol/openid-connect/token\nwith grant_type=authorization_code&code=AUTH_CODE&redirect_uri=https://cashkontrolleur.de/login/oauth2/code/keycloak
+Keycloak -> Postgres: 20. Validate token request
+Postgres -> Keycloak: 21. Validation result
+Keycloak -> Service: 22. Respond with Access & Refresh Tokens
+Service -> Service: 23. Process authentication
+Service -> NGINX: 24. Redirect to https://cashkontrolleur.de/private (login success)
+NGINX -> Service: 25. Forward to http://spring-service:8081/private
+Service -> NGINX: 26. Return protected resource
+NGINX -> User: 27. Display protected resource
+@enduml
