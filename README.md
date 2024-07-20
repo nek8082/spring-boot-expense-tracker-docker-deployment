@@ -1,6 +1,7 @@
 # About
 
 This entire project is a docker compose project for the [cashkontrolleur.de](https://cashkontrolleur.de/) website, based on docker-compose.
+It is meant to be used in conjunction with the following project [spring-boot-expense-tracker](https://github.com/nek8082/spring-boot-expense-tracker).
 
 # Configuration for local testing
 
