@@ -1,6 +1,6 @@
 # About
 
-This entire project is a docker compose project for the CashKontrolleur website, based on docker-compose.
+This entire project is a docker compose project for the [cashkontrolleur.de](https://cashkontrolleur.de/) website, based on docker-compose.
 
 # Configuration for local testing
 
