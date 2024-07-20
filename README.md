@@ -1,6 +1,6 @@
 # What is a docker client
 
-This entire project is a docker client for the CashKontrolleur website, based on docker-compose.
+This entire project is a docker client for the [cashkontrolleur.de](https://cashkontrolleur.de) website, based on docker-compose.
 
 # Configuring Docker Client for local testing
 
